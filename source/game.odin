@@ -34,10 +34,10 @@ import rl "vendor:raylib"
 PIXEL_WINDOW_HEIGHT :: 180
 
 Game_Memory :: struct {
-	player_pos: rl.Vector2,
+	player_pos:     rl.Vector2,
 	player_texture: rl.Texture,
-	some_number: int,
-	run: bool,
+	some_number:    int,
+	run:            bool,
 }
 
 g: ^Game_Memory
@@ -46,17 +46,11 @@ game_camera :: proc() -> rl.Camera2D {
 	w := f32(rl.GetScreenWidth())
 	h := f32(rl.GetScreenHeight())
 
-	return {
-		zoom = h/PIXEL_WINDOW_HEIGHT,
-		target = g.player_pos,
-		offset = { w/2, h/2 },
-	}
+	return {zoom = h / PIXEL_WINDOW_HEIGHT, target = g.player_pos, offset = {w / 2, h / 2}}
 }
 
 ui_camera :: proc() -> rl.Camera2D {
-	return {
-		zoom = f32(rl.GetScreenHeight())/PIXEL_WINDOW_HEIGHT,
-	}
+	return {zoom = f32(rl.GetScreenHeight()) / PIXEL_WINDOW_HEIGHT}
 }
 
 update :: proc() {
@@ -99,7 +93,13 @@ draw :: proc() {
 	// NOTE: `fmt.ctprintf` uses the temp allocator. The temp allocator is
 	// cleared at the end of the frame by the main application, meaning inside
 	// `main_hot_reload.odin`, `main_release.odin` or `main_web_entry.odin`.
-	rl.DrawText(fmt.ctprintf("some_number: %v\nplayer_pos: %v", g.some_number, g.player_pos), 5, 5, 8, rl.WHITE)
+	rl.DrawText(
+		fmt.ctprintf("some_number: %v\nplayer_pos: %v", g.some_number, g.player_pos),
+		5,
+		5,
+		8,
+		rl.WHITE,
+	)
 
 	rl.EndMode2D()
 
@@ -117,10 +117,31 @@ game_update :: proc() {
 
 @(export)
 game_init_window :: proc() {
-	rl.SetConfigFlags({.WINDOW_RESIZABLE, .VSYNC_HINT})
-	rl.InitWindow(1280, 720, "Odin + Raylib + Hot Reload template!")
-	rl.SetWindowPosition(200, 200)
-	rl.SetTargetFPS(500)
+	vsync := true // VSYNC on by default
+
+	flags: rl.ConfigFlags = {.WINDOW_RESIZABLE}
+	if vsync {
+		flags += {.VSYNC_HINT}
+	}
+
+	rl.SetConfigFlags(flags)
+	rl.InitWindow(1280, 720, "My Game")
+
+	when ODIN_OS == .JS {
+		// Web browser handles the FPS via requestAnimationFrame
+		rl.SetTargetFPS(0)
+	} else {
+		if vsync {
+			// Monitor's refresh rate dictates FPS
+			rl.SetTargetFPS(500)
+		} else {
+			// Limit to 60FPS if VSYNC is disabled
+			monitor := rl.GetCurrentMonitor()
+			hz := rl.GetMonitorRefreshRate(monitor)
+			rl.SetTargetFPS(hz > 0 ? hz : 60)
+		}
+	}
+
 	rl.SetExitKey(nil)
 }
 
@@ -129,8 +150,8 @@ game_init :: proc() {
 	g = new(Game_Memory)
 
 	g^ = Game_Memory {
-		run = true,
-		some_number = 100,
+		run            = true,
+		some_number    = 100,
 
 		// You can put textures, sounds and music in the `assets` folder. Those
 		// files will be part any release or web build.
