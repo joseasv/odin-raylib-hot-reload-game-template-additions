@@ -8,7 +8,7 @@
 
 - Fixed EXTRA_LINKER_FLAGS for more recent Odin versions.
 
-## End additions
+## Original description
 
 This is an [Odin](https://github.com/odin-lang/Odin) + [Raylib](https://github.com/raysan5/raylib) game template with [Hot Reloading](http://zylinski.se/posts/hot-reload-gameplay-code/) pre-setup. It makes it possible to reload gameplay code while the game is running.
 
