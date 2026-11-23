@@ -1,5 +1,15 @@
 # Odin + Raylib + Hot Reload template
 
+## Additions
+
+- New script `build_windows.sh` to create Windows build in Linux via xwin (Only tested on Manjaro).
+
+- The `game_init_window` proc now sets setTargetFPS to 0 FPS on web builds and on desktop to 500 FPS if VSYNC is on. If VSYNC is off on desktop, the target FPS is the monitor's refresh rate or 60 FPS if the monitor's refresh rate is not found.
+
+- Fixed EXTRA_LINKER_FLAGS for more recent Odin versions.
+
+## End additions
+
 This is an [Odin](https://github.com/odin-lang/Odin) + [Raylib](https://github.com/raysan5/raylib) game template with [Hot Reloading](http://zylinski.se/posts/hot-reload-gameplay-code/) pre-setup. It makes it possible to reload gameplay code while the game is running.
 
 Supported platforms: Windows, macOS, Linux and [web](#web-build).
